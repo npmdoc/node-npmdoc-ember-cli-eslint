@@ -1,0 +1,216 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/ember-cli/ember-cli-eslint">ember-cli-eslint (v3.0.3)</a>
+</h1>
+<h4>Ember-cli eslint support, for checking your application matches your coding standards.</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.ember-cli-eslint">module ember-cli-eslint</a><ol>
+
+        <li>
+
+            <span class="apidocSignatureSpan">boolean <span class="apidocSignatureSpan">ember-cli-eslint.</span>isDefaultJSLinter</span>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.ember-cli-eslint.included">
+            function <span class="apidocSignatureSpan">ember-cli-eslint.</span>included
+            <span class="apidocSignatureSpan">(app)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.ember-cli-eslint.isDevelopingAddon">
+            function <span class="apidocSignatureSpan">ember-cli-eslint.</span>isDevelopingAddon
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.ember-cli-eslint.lintTree">
+            function <span class="apidocSignatureSpan">ember-cli-eslint.</span>lintTree
+            <span class="apidocSignatureSpan">(type, tree)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">string <span class="apidocSignatureSpan">ember-cli-eslint.</span>name</span>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.ember-cli-eslint" id="apidoc.module.ember-cli-eslint">module ember-cli-eslint</a></h1>
+
+
+
+
+    <h2>
+        <a href="#apidoc.element.ember-cli-eslint.included" id="apidoc.element.ember-cli-eslint.included">
+        function <span class="apidocSignatureSpan">ember-cli-eslint.</span>included
+        <span class="apidocSignatureSpan">(app)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">included = function (app) {
+  this._super.included.apply(this, arguments);
+  this.jshintrc = app.options.jshintrc;
+  this.options = app.options.eslint || {};
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.ember-cli-eslint.isDevelopingAddon" id="apidoc.element.ember-cli-eslint.isDevelopingAddon">
+        function <span class="apidocSignatureSpan">ember-cli-eslint.</span>isDevelopingAddon
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">isDevelopingAddon = function () {
+  return false;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.ember-cli-eslint.lintTree" id="apidoc.element.ember-cli-eslint.lintTree">
+        function <span class="apidocSignatureSpan">ember-cli-eslint.</span>lintTree
+        <span class="apidocSignatureSpan">(type, tree)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">lintTree = function (type, tree) {
+  var project = this.project;
+  var ui = this.ui;
+
+  if (type === 'templates') {
+    return undefined;
+  }
+
+  var eslint = require('broccoli-lint-eslint');
+  var jsStringEscape = require('js-string-escape');
+
+  return eslint(tree, {
+    testGenerator: this.options.testGenerator || function(relativePath, errors, results) {
+      if (!project.generateTestFile) {
+        // Empty test generator. The reason we do that is that `lintTree`
+        // will merge the returned tree with the `tests` directory anyway,
+        // so we minimize the damage by returning empty files instead of
+        // duplicating app tree.
+        return '';
+      }
+
+      var passed, messages;
+      if (results) {
+        passed = !results.errorCount || results.errorCount.length === 0;
+
+        messages = '';
+        if (results.messages) {
+          messages = jsStringEscape('\n' + render(results.messages));
+        }
+      } else {
+        // backwards compat support for broccoli-lint-eslint versions
+        // 2.3.0 and older...
+        passed = !errors || errors.length === 0;
+
+        if (errors) {
+          messages = jsStringEscape('\n' + render(errors));
+        }
+      }
+
+      return project.generateTestFile('ESLint - ' + relativePath, [{
+        name: 'should pass ESLint',
+        passed: passed,
+        errorMessage: relativePath + ' should pass ESLint.' + messages
+      }]);
+    },
+
+    console: {
+      log: function(message) {
+        ui.writeLine(message);
+      },
+
+      error: function(message) {
+        ui.writeLine(message, 'ERROR');
+      }
+    }
+  });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
